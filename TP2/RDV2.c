@@ -47,17 +47,12 @@ int V(int semid, int noSem)
 int main (void)
 { // � compl�ter sans oublier de supprimer l'ensemble des s�maphores
 
-	key_t k;
-	int semid;
-
 	// Q- Il faut d'abord recr�er la cl� (voir sema.c)
 	execl("./sema", "testfile", 2, 1);
-	k = ftok("testfile", 1);
 	
 	// Q- il faut ensuite ouvrir le semaphore avec semget, � part la cl�, les autres argument doivent �tre � z�ro
 	// car il ne s'agit pas d'une cr�ation mais d'une ouverture
-	semid = semget(k, 0, 0);
-	printf("%i", semid);
+	
 	
 	// Q- faire l'appel � sleep() afin d'avoir des attentes de diff�rentes dur�es pour les 2 processus
 	
