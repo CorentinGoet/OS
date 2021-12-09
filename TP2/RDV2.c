@@ -24,9 +24,9 @@ int P(int semid, int noSem)
     Ops[0].sem_op = -1;
     Ops[0].sem_flg = 0;
 
-
 	// Q- faire appel � la fonction semop pour r�aliser l'op�ration P, la variable OK r�cup�re la valeur de retour
-    semop(semid, Ops, noSem);
+    ok = semop(semid, Ops, noSem);
+	return ok;
 }
 
 /* retourne -1 en cas d'erreur           */
@@ -41,7 +41,8 @@ int V(int semid, int noSem)
     Ops[0].sem_op = +1;
     Ops[0].sem_flg = 0;
 	// Q- faire appel � la fonction semop pour r�aliser l'op�ration V, la variable OK r�cup�re la valeur de retour
-    semop(semid, Ops, noSem);
+    ok = semop(semid, Ops, noSem);
+	return ok;
 }
 
 int main (void)
@@ -49,24 +50,28 @@ int main (void)
 
 	int semid;
 	key_t k;
+	int res;
 
 
 	// Q- Il faut d'abord recr�er la cl� (voir sema.c)
 	k = ftok("testfile", 1); // création de la liste 
-	printf("Clé créée !");
+	printf("RDV2 : Clé créée !\n");
 	// Q- il faut ensuite ouvrir le semaphore avec semget, � part la cl�, les autres argument doivent �tre � z�ro
 	// car il ne s'agit pas d'une cr�ation mais d'une ouverture
 	semid = semget(k, 0, 0);
-	printf("semaphore récupéré");
+	printf("RDV2 : id semaphore récupéré : %i\n", semid);
 	// Q- faire l'appel � sleep() afin d'avoir des attentes de diff�rentes dur�es pour les 2 processus
 	
-	printf("RDV2 s'endort pour 5 secondes ...");
+	printf("RDV2 s'endort pour 5 secondes ...\n");
 	sleep(5);
 	
 	// Q- faire appel � P et � V (voir le TD)
-	V(semid, 1); 	// On libère le semaphore (noSem = 1 car on libère le 2e semaphore)
-	P(semid, 0); 	// On attend le 1er semaphore 
+	res = V(semid, 1); 	// On libère le semaphore (noSem = 1 car on libère le 2e semaphore)
+	printf("Resultat v : %i\n", res);
+	printf("Sémaphore 2 libéré.\n");
+	res = P(semid, 0); 	// On attend le 1er semaphore 
+	printf("resultat p : %i\n", res);
 	
 	// appeler la fonction de RDV, un printf est suffisant.
-	printf("Je suis le 2e programme.");
+	printf("Je suis le 2e programme.\n");
 }

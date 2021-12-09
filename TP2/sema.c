@@ -48,7 +48,7 @@ int main(int argc,char ** argv)
 	 
 	 // Q: appel � la fonction semget() et mise de la valeur de retour dans la variable semid
 	 //--
-     semid = semget(k, nbSem, IPC_CREAT);
+     semid = semget(k, nbSem, IPC_CREAT | 0666);
 	 
 	 if (semid==-1)
 	 {
