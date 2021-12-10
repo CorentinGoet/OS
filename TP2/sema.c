@@ -71,7 +71,10 @@ int main(int argc,char ** argv)
 	// Q: faites un appel � la fonction semclt() pour initialiser les s�maphore avec les valeurs se trouvant dans le tableau values
 	// utilisez l'op�ration SETALL
 	// --
-    semctl(semid, nbSem, SETALL, values);
+    if(semctl(semid, nbSem, SETALL, values) == -1){
+		fprintf(stderr, "Error on semctl\n");
+		exit(-2);
+	}
 	free(values);
 		 
 

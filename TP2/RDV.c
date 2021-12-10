@@ -41,7 +41,7 @@ int V(int semid, int noSem)
 	// Q- donner les 3 �l�ments de la structure Ops pour r�aliser l'op�ration (voir le cours)
 	// Ops[0].sem_num = ...; ...
 	Ops[0].sem_num = noSem;
-    Ops[0].sem_op = +1;
+    Ops[0].sem_op = 1;
     Ops[0].sem_flg = 0;
 	// Q- faire appel � la fonction semop pour r�aliser l'op�ration V, la variable OK r�cup�re la valeur de retour
     ok = semop(semid, Ops, 1);
@@ -65,17 +65,27 @@ int main (void)
 	printf("RDV1 : semaphore récupéré : %i\n", semid);
 	// Q- faire l'appel � sleep() afin d'avoir des attentes de diff�rentes dur�es pour les 2 processus
 	
-	printf("RDV1 s'endort pour 20 secondes ...\n");
-	sleep(2);
+	printf("RDV1 s'endort pour 15 secondes ...\n");
+	sleep(15);
 	
 	// Q- faire appel � P et � V (voir le TD)
 	
-	res = V(semid, 0); 	// On libère le semaphore (noSem = 0 car on libère le 1er semaphore)
+	if(V(semid, 0) == -1){// On libère le semaphore (noSem = 0 car on libère le 1er semaphore)
+		printf("Problème fonction V.\n");
+		exit(-1);
+	}; 	
 	printf("RDV1 : Sémaphore libéré\n");
-	printf("Résultat v : %i\n", res);
-	res = P(semid, 1); 	// On attend le 2e semaphore 
-	printf("Résultat p : %i\n", res);
-
+	if(P(semid, 1) == -1){ 	// On attend le 2e semaphore 
+		printf("Problème fonction P.\n");
+		exit(-1);
+	}
 	// appeler la fonction de RDV, un printf est suffisant.
 	printf("Je suis le 1er programme.\n");
+
+	// Supprimer le semaphore
+	if(semctl(semid, 2, IPC_RMID) == -1){
+		printf("Problème smctl\n");
+		exit(-1);
+	}
+	return 0;
 }

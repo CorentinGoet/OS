@@ -20,12 +20,12 @@ int P(int semid, int noSem)
 	
 	// Q- donner les 3 �l�ments de la structure Ops pour r�aliser l'op�ration (voir le cours)
 	// Ops[0].sem_num = ...; ...
-	Ops[0].sem_num = semid;
+	Ops[0].sem_num = noSem;
     Ops[0].sem_op = -1;
     Ops[0].sem_flg = 0;
 
 	// Q- faire appel � la fonction semop pour r�aliser l'op�ration P, la variable OK r�cup�re la valeur de retour
-    ok = semop(semid, Ops, noSem);
+    ok = semop(semid, Ops, 1);
 	return ok;
 }
 
@@ -37,11 +37,11 @@ int V(int semid, int noSem)
 	
 	// Q- donner les 3 �l�ments de la structure Ops pour r�aliser l'op�ration (voir le cours)
 	// Ops[0].sem_num = ...; ...
-	Ops[0].sem_num = semid;
-    Ops[0].sem_op = +1;
+	Ops[0].sem_num = noSem;
+    Ops[0].sem_op = 1;
     Ops[0].sem_flg = 0;
 	// Q- faire appel � la fonction semop pour r�aliser l'op�ration V, la variable OK r�cup�re la valeur de retour
-    ok = semop(semid, Ops, noSem);
+    ok = semop(semid, Ops,1);
 	return ok;
 }
 
@@ -66,12 +66,18 @@ int main (void)
 	sleep(5);
 	
 	// Q- faire appel � P et � V (voir le TD)
-	res = V(semid, 1); 	// On libère le semaphore (noSem = 1 car on libère le 2e semaphore)
-	printf("Resultat v : %i\n", res);
-	printf("Sémaphore 2 libéré.\n");
-	res = P(semid, 0); 	// On attend le 1er semaphore 
-	printf("resultat p : %i\n", res);
+	if(V(semid, 1) == -1){ 	// On libère le semaphore (noSem = 1 car on libère le 2e semaphore)
+		printf("Problème fonction V\n");
+		exit(-1);
+	}
+	printf("RDV2 : Sémaphore 2 libéré.\n");
+	if(P(semid, 0) == -1){ 	// On attend le 1er semaphore 
+		printf("Probleme fonction P");
+		exit(-1);
+	}
 	
 	// appeler la fonction de RDV, un printf est suffisant.
 	printf("Je suis le 2e programme.\n");
+
+	return 0;
 }
