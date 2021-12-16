@@ -135,8 +135,8 @@ int main(){
     lire("exo2_data.txt", mot);
     printf("Le mot %s a été lu.\n", mot);
 
-    printf("Lecteur %i: lecture terminée début de sommeil.\n", num);
     sleep(10);
+    printf("Lecteur %i: lecture terminée.\n", num);
 
     // On prend le sémaphore mutex_l
     if(P(semid, 1) == -1){

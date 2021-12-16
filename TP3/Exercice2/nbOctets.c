@@ -30,7 +30,7 @@ void fils_exec(int tube[2]){
   close(tube[1]);  // Après redirection le descripteur d'écriture du tube est inutile. 
 
   // Exécuter la commande wc
-  execlp("wc", "wc", "toto", NULL);
+  execlp("wc", "wc","-c", "toto", NULL);
   perror("execlp");
 
   exit(0);
@@ -41,20 +41,24 @@ void fils_exec(int tube[2]){
 * Fils_read correspond au code exécuté par le fils chargé de la lecture.
 */
 void fils_read(int tube[2], FILE *fIn, Zone z){
-
+  int * ptDeb;
   // Fermeture du descripteur d'écriture dans le tube
   close(tube[1]);
 
   // Ouverture d'un flux vers la sortie du tube
   fIn = fdopen(tube[0],"r");
-
+  if (fIn == NULL) {
+        perror("open fIn");
+        exit(-1);
+      }
   // Lire dans le flux fIn
   int buf;
   fscanf(fIn, "%i", &buf);
   
   // Ecrire dans la mémoire partagée
   printf("Ecriture de %i sur la mémoire partagée\n", buf);
-  z.debut = buf;
+  ptDeb = (int *) z.debut;
+  *ptDeb = buf;
 
   // Fermer le flux fIn et le descripteur de lecture du tube 
   close(fIn);
@@ -82,7 +86,7 @@ void fin_pere(int tube[2], Zone z, int pidWC, int pidRead, int status){
 
   /* Recuperer le resultat dans la memoire partagee */
   
-  printf("Le fichier contient %i octets\n", z.debut);
+  printf("Le fichier contient %i octets\n", *(int *) z.debut);
 
   /* Attendre le 1er enfant  */
   waitpid(pidWC, &status, 0);
@@ -125,10 +129,9 @@ int main(int argc,char **argv)
 
 /* A cause de warnings lorsque le code n'est pas encore la ...*/
 
- (void)action; (void)fIn; (void)tube; (void)status; (void)pidREAD; (void)pidWC;
+ //(void)action; (void)fIn; (void)tube; (void)status; (void)pidREAD; (void)pidWC;
 
 /* Gestion des signaux */
-/* =================== */
 
   /* Preparation de la structure action pour recevoir le signal SIGUSR1 */
   action.sa_handler = sig_handler;
