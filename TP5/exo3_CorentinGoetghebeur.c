@@ -1,3 +1,7 @@
+/*
+Le programme fonctionne, l'équilibrage sur les différents processeurs est fait sur les threads de multiplications.
+*/
+
 #define _GNU_SOURCE
 #include <sched.h>
 
